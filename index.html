@@ -1,0 +1,1903 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CafeSound - Premium Coffee Music Streaming</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --spotify-green: #1db954;
+            --spotify-dark: #121212;
+            --spotify-darker: #000000;
+            --spotify-gray: #181818;
+            --spotify-light-gray: #282828;
+            --spotify-text: #ffffff;
+            --spotify-text-muted: #b3b3b3;
+            --coffee-accent: #d4a574;
+            --coffee-dark: #8b4513;
+        }
+        
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--spotify-dark);
+            color: var(--spotify-text);
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+        
+        .poppins {
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        /* Enhanced Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 240px;
+            height: 100vh;
+            background: var(--spotify-darker);
+            padding: 24px;
+            z-index: 100;
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+        }
+        
+        .main-content {
+            margin-left: 240px;
+            padding-bottom: 90px;
+            background: linear-gradient(180deg, var(--spotify-gray) 0%, var(--spotify-dark) 300px);
+            min-height: 100vh;
+        }
+        
+        /* Enhanced Spotify Cards */
+        .spotify-card {
+            background: var(--spotify-light-gray);
+            border-radius: 8px;
+            padding: 16px;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .spotify-card:hover {
+            background: #2a2a2a;
+            transform: translateY(-4px);
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.5);
+        }
+        
+        .spotify-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(29, 185, 84, 0.1), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .spotify-card:hover::before {
+            opacity: 1;
+        }
+        
+        /* Enhanced Play Button */
+        .play-button {
+            position: absolute;
+            bottom: 16px;
+            right: 16px;
+            width: 48px;
+            height: 48px;
+            background: var(--spotify-green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: black;
+            font-size: 16px;
+            opacity: 0;
+            transform: translateY(8px);
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+            border: none;
+            cursor: pointer;
+        }
+        
+        .spotify-card:hover .play-button {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .play-button:hover {
+            transform: scale(1.05);
+            background: #1ed760;
+        }
+        
+        .play-button:active {
+            transform: scale(0.95);
+        }
+        
+        .play-button.playing {
+            opacity: 1;
+            transform: translateY(0);
+            background: var(--spotify-green);
+        }
+        
+        .play-button.playing:hover {
+            background: #1ed760;
+        }
+        
+        /* Enhanced Album Art */
+        .album-art {
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 8px;
+            background: linear-gradient(135deg, var(--coffee-accent), var(--coffee-dark));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: white;
+            margin-bottom: 16px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+        }
+        
+        .album-art::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
+        }
+        
+        /* Enhanced Coffee Steam Animation */
+        .coffee-steam {
+            position: absolute;
+            width: 3px;
+            height: 40px;
+            background: linear-gradient(to top, transparent, rgba(255,255,255,0.6), transparent);
+            border-radius: 50%;
+            animation: steam 3s ease-in-out infinite;
+            filter: blur(1px);
+        }
+        
+        @keyframes steam {
+            0%, 100% { 
+                opacity: 0; 
+                transform: translateY(0) translateX(0) rotate(0deg); 
+            }
+            25% { 
+                opacity: 0.7; 
+                transform: translateY(-10px) translateX(2px) rotate(5deg); 
+            }
+            50% { 
+                opacity: 1; 
+                transform: translateY(-20px) translateX(-1px) rotate(-3deg); 
+            }
+            75% { 
+                opacity: 0.8; 
+                transform: translateY(-30px) translateX(3px) rotate(7deg); 
+            }
+        }
+        
+        /* Enhanced Music Player */
+        .music-player {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 90px;
+            background: var(--spotify-gray);
+            border-top: 1px solid #282828;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            z-index: 200;
+            backdrop-filter: blur(20px);
+        }
+        
+        /* Enhanced Progress Bar */
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: #4f4f4f;
+            border-radius: 2px;
+            cursor: pointer;
+            position: relative;
+            transition: height 0.2s ease;
+        }
+        
+        .progress-bar:hover {
+            height: 6px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: var(--spotify-green);
+            border-radius: 2px;
+            width: 0%;
+            position: relative;
+            transition: width 0.1s ease;
+        }
+        
+        .progress-handle {
+            position: absolute;
+            right: -6px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 12px;
+            height: 12px;
+            background: white;
+            border-radius: 50%;
+            opacity: 0;
+            transition: opacity 0.2s;
+            cursor: pointer;
+        }
+        
+        .progress-bar:hover .progress-handle {
+            opacity: 1;
+        }
+        
+        /* Enhanced Volume Slider */
+        .volume-slider {
+            width: 100px;
+            height: 4px;
+            background: #4f4f4f;
+            border-radius: 2px;
+            cursor: pointer;
+            position: relative;
+            transition: height 0.2s ease;
+        }
+        
+        .volume-slider:hover {
+            height: 6px;
+        }
+        
+        .volume-fill {
+            height: 100%;
+            background: var(--spotify-green);
+            border-radius: 2px;
+            width: 70%;
+            position: relative;
+            transition: width 0.1s ease;
+        }
+        
+        .volume-handle {
+            position: absolute;
+            right: -6px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 12px;
+            height: 12px;
+            background: white;
+            border-radius: 50%;
+            opacity: 0;
+            transition: opacity 0.2s;
+            cursor: pointer;
+        }
+        
+        .volume-slider:hover .volume-handle {
+            opacity: 1;
+        }
+        
+        /* Enhanced Navigation */
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            color: var(--spotify-text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            border-radius: 4px;
+            margin: 2px 0;
+        }
+        
+        .nav-item:hover,
+        .nav-item.active {
+            color: var(--spotify-text);
+            background: rgba(255, 255, 255, 0.1);
+            padding-left: 12px;
+        }
+        
+        .nav-item i {
+            width: 24px;
+            margin-right: 16px;
+            font-size: 20px;
+        }
+        
+        /* Enhanced Coffee Beans Animation */
+        .coffee-bean {
+            position: absolute;
+            width: 8px;
+            height: 10px;
+            background: var(--coffee-dark);
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            animation: float 8s ease-in-out infinite;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .coffee-bean::before {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 1px;
+            height: 6px;
+            background: #654321;
+            border-radius: 1px;
+        }
+        
+        .coffee-bean::after {
+            content: '';
+            position: absolute;
+            top: 1px;
+            left: 2px;
+            width: 2px;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+        }
+        
+        @keyframes float {
+            0%, 100% { 
+                transform: translateY(0px) rotate(0deg); 
+                opacity: 0.6; 
+            }
+            25% { 
+                transform: translateY(-15px) rotate(90deg); 
+                opacity: 0.8; 
+            }
+            50% { 
+                transform: translateY(-30px) rotate(180deg); 
+                opacity: 1; 
+            }
+            75% { 
+                transform: translateY(-20px) rotate(270deg); 
+                opacity: 0.9; 
+            }
+        }
+        
+        /* Enhanced Genre Pills */
+        .genre-pill {
+            background: var(--spotify-light-gray);
+            color: var(--spotify-text);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            border: 2px solid transparent;
+        }
+        
+        .genre-pill:hover {
+            background: #3a3a3a;
+            transform: translateY(-1px);
+        }
+        
+        .genre-pill.active {
+            background: var(--spotify-green);
+            color: black;
+            border-color: var(--spotify-green);
+        }
+        
+        /* Enhanced Track List */
+        .track-item {
+            display: grid;
+            grid-template-columns: 16px 1fr auto auto;
+            gap: 16px;
+            padding: 8px 16px;
+            border-radius: 4px;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+        
+        .track-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .track-item.playing {
+            background: rgba(29, 185, 84, 0.1);
+        }
+        
+        .track-item.playing .track-number {
+            color: var(--spotify-green);
+        }
+        
+        .track-item.playing h4 {
+            color: var(--spotify-green);
+        }
+        
+        .track-number {
+            color: var(--spotify-text-muted);
+            font-size: 14px;
+            text-align: center;
+            transition: color 0.2s ease;
+        }
+        
+        .track-item:hover .track-number {
+            opacity: 0;
+        }
+        
+        .track-item:hover .track-number::after {
+            content: '\f04b';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            opacity: 1;
+            color: white;
+        }
+        
+        .track-info h4 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 400;
+            color: var(--spotify-text);
+            transition: color 0.2s ease;
+        }
+        
+        .track-info p {
+            margin: 0;
+            font-size: 14px;
+            color: var(--spotify-text-muted);
+        }
+        
+        .track-duration {
+            color: var(--spotify-text-muted);
+            font-size: 14px;
+        }
+        
+        /* Enhanced Control Buttons */
+        .control-button {
+            background: none;
+            border: none;
+            color: var(--spotify-text-muted);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            padding: 8px;
+            border-radius: 50%;
+        }
+        
+        .control-button:hover {
+            color: var(--spotify-text);
+            background: rgba(255, 255, 255, 0.1);
+            transform: scale(1.1);
+        }
+        
+        .control-button:active {
+            transform: scale(0.95);
+        }
+        
+        .control-button.active {
+            color: var(--spotify-green);
+        }
+        
+        .main-play-button {
+            width: 48px;
+            height: 48px;
+            background: white;
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: black;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 14px;
+        }
+        
+        .main-play-button:hover {
+            transform: scale(1.05);
+        }
+        
+        .main-play-button:active {
+            transform: scale(0.95);
+        }
+        
+        /* Enhanced Heart Button */
+        .heart-button {
+            background: none;
+            border: none;
+            color: var(--spotify-text-muted);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 16px;
+        }
+        
+        .heart-button:hover {
+            color: var(--spotify-text);
+            transform: scale(1.1);
+        }
+        
+        .heart-button.liked {
+            color: var(--spotify-green);
+        }
+        
+        /* Modal Styles */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal-content {
+            background: var(--spotify-gray);
+            border-radius: 8px;
+            padding: 24px;
+            max-width: 400px;
+            width: 90%;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+        
+        .modal.show .modal-content {
+            transform: scale(1);
+        }
+        
+        .modal input {
+            width: 100%;
+            background: var(--spotify-light-gray);
+            border: 1px solid #404040;
+            border-radius: 4px;
+            padding: 12px;
+            color: white;
+            margin: 8px 0;
+        }
+        
+        .modal input:focus {
+            outline: none;
+            border-color: var(--spotify-green);
+        }
+        
+        .modal button {
+            background: var(--spotify-green);
+            color: black;
+            border: none;
+            border-radius: 20px;
+            padding: 12px 24px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 8px 4px;
+            transition: all 0.2s ease;
+        }
+        
+        .modal button:hover {
+            background: #1ed760;
+            transform: scale(1.05);
+        }
+        
+        .modal button.secondary {
+            background: transparent;
+            color: white;
+            border: 1px solid #404040;
+        }
+        
+        .modal button.secondary:hover {
+            background: #404040;
+        }
+        
+        /* YouTube Player */
+        .youtube-player {
+            width: 100%;
+            height: 315px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        /* Section Visibility */
+        .section {
+            display: none;
+        }
+        
+        .section.active {
+            display: block;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .music-player {
+                padding: 0 8px;
+            }
+            
+            .music-player > div:nth-child(3) {
+                display: none;
+            }
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--spotify-dark);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #4f4f4f;
+            border-radius: 6px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6f6f6f;
+        }
+        
+        /* Header Gradient */
+        .header-gradient {
+            background: linear-gradient(135deg, var(--coffee-accent) 0%, var(--coffee-dark) 100%);
+            padding: 64px 32px 32px;
+            margin: -24px -32px 32px;
+        }
+        
+        /* Grid Layouts */
+        .recently-played-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 24px;
+            margin-bottom: 48px;
+        }
+        
+        .section-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 24px;
+            margin-bottom: 48px;
+        }
+        
+        /* Loading Animation */
+        .loading {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--spotify-green);
+            color: black;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 500;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        /* Enhanced Hover Effects */
+        .hover-lift {
+            transition: transform 0.2s ease;
+        }
+        
+        .hover-lift:hover {
+            transform: translateY(-2px);
+        }
+        
+        /* Search Bar */
+        .search-bar {
+            background: var(--spotify-light-gray);
+            border: none;
+            border-radius: 20px;
+            padding: 12px 16px;
+            color: var(--spotify-text);
+            width: 100%;
+            max-width: 400px;
+            font-size: 14px;
+        }
+        
+        .search-bar:focus {
+            outline: 2px solid var(--spotify-green);
+            background: #3a3a3a;
+        }
+        
+        .search-bar::placeholder {
+            color: var(--spotify-text-muted);
+        }
+        
+        /* YouTube Link Button */
+        .youtube-link {
+            background: #ff0000;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .youtube-link:hover {
+            background: #cc0000;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <!-- Notification -->
+    <div id="notification" class="notification">
+        <span id="notificationText">Track added to queue</span>
+    </div>
+
+    <!-- Create Playlist Modal -->
+    <div id="createPlaylistModal" class="modal">
+        <div class="modal-content">
+            <h2 class="text-xl font-bold mb-4">Create Playlist</h2>
+            <input type="text" id="playlistNameInput" placeholder="Playlist name" maxlength="50">
+            <textarea id="playlistDescInput" placeholder="Description (optional)" rows="3" style="width: 100%; background: var(--spotify-light-gray); border: 1px solid #404040; border-radius: 4px; padding: 12px; color: white; margin: 8px 0; resize: vertical;"></textarea>
+            <div class="flex justify-end mt-4">
+                <button class="secondary" onclick="closeCreatePlaylistModal()">Cancel</button>
+                <button onclick="createPlaylist()">Create</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <!-- Logo -->
+        <div class="mb-8">
+            <div class="flex items-center">
+                <div class="w-8 h-8 bg-gradient-to-br from-amber-400 to-orange-600 rounded mr-3 flex items-center justify-center">
+                    <i class="fas fa-coffee text-white text-sm"></i>
+                </div>
+                <span class="text-xl font-bold poppins">CafeSound</span>
+            </div>
+        </div>
+        
+        <!-- Main Navigation -->
+        <nav class="mb-8">
+            <a href="#" class="nav-item active" data-section="home">
+                <i class="fas fa-home"></i>
+                Home
+            </a>
+            <a href="#" class="nav-item" data-section="search">
+                <i class="fas fa-search"></i>
+                Search
+            </a>
+            <a href="#" class="nav-item" data-section="library">
+                <i class="fas fa-list"></i>
+                Your Library
+            </a>
+        </nav>
+        
+        <!-- Create Playlist -->
+        <div class="mb-8">
+            <a href="#" class="nav-item" id="createPlaylistBtn">
+                <i class="fas fa-plus-square"></i>
+                Create Playlist
+            </a>
+            <a href="#" class="nav-item" id="likedSongsBtn" data-section="liked">
+                <i class="fas fa-heart"></i>
+                Liked Songs
+            </a>
+            <a href="#" class="nav-item" id="megaPlaylistBtn" data-section="megaplaylist">
+                <i class="fas fa-music"></i>
+                Mega Playlist
+            </a>
+        </div>
+        
+        <!-- Coffee Playlists -->
+        <div class="border-t border-gray-700 pt-4">
+            <div class="text-xs text-gray-400 uppercase tracking-wider mb-4 font-semibold">Coffee Moods</div>
+            <a href="#" class="nav-item text-sm playlist-nav" data-playlist="morning">Morning Brew</a>
+            <a href="#" class="nav-item text-sm playlist-nav" data-playlist="afternoon">Afternoon Espresso</a>
+            <a href="#" class="nav-item text-sm playlist-nav" data-playlist="evening">Evening Decaf</a>
+            <a href="#" class="nav-item text-sm playlist-nav" data-playlist="study">Study Sessions</a>
+            <a href="#" class="nav-item text-sm playlist-nav" data-playlist="weekend">Weekend Vibes</a>
+        </div>
+        
+        <!-- User Created Playlists -->
+        <div class="border-t border-gray-700 pt-4 mt-4" id="userPlaylistsSection">
+            <div class="text-xs text-gray-400 uppercase tracking-wider mb-4 font-semibold">Your Playlists</div>
+            <div id="userPlaylistsList"></div>
+        </div>
+        
+        <!-- Floating Coffee Beans -->
+        <div class="coffee-bean" style="top: 60%; left: 20%; animation-delay: 0s;"></div>
+        <div class="coffee-bean" style="top: 40%; right: 15%; animation-delay: 2s;"></div>
+        <div class="coffee-bean" style="top: 80%; left: 60%; animation-delay: 4s;"></div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Home Section -->
+        <div id="homeSection" class="section active">
+            <!-- Header -->
+            <div class="header-gradient">
+                <div class="flex items-center justify-between mb-8">
+                    <div class="flex items-center space-x-4">
+                        <button class="w-8 h-8 bg-black bg-opacity-50 rounded-full flex items-center justify-center control-button" id="backBtn">
+                            <i class="fas fa-chevron-left text-sm"></i>
+                        </button>
+                        <button class="w-8 h-8 bg-black bg-opacity-50 rounded-full flex items-center justify-center control-button" id="forwardBtn">
+                            <i class="fas fa-chevron-right text-sm"></i>
+                        </button>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <input type="text" placeholder="Search for songs, artists..." class="search-bar" id="searchInput">
+                        <button class="bg-black bg-opacity-50 px-4 py-2 rounded-full text-sm font-semibold hover-lift">
+                            Upgrade
+                        </button>
+                        <div class="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center cursor-pointer hover-lift">
+                            <i class="fas fa-user text-sm"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <h1 class="text-4xl font-bold mb-2 poppins" id="mainTitle">Good afternoon</h1>
+                <p class="text-lg opacity-80" id="mainSubtitle">Perfect coffee music for your day</p>
+            </div>
+            
+            <div class="px-8">
+                <!-- Featured Music Video -->
+                <section class="mb-12">
+                    <h2 class="text-2xl font-bold mb-6 poppins">Featured Music Video</h2>
+                    <div class="bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg p-6">
+                        <div class="flex items-center space-x-6 mb-4">
+                            <div class="w-16 h-16 bg-gradient-to-br from-red-500 to-orange-500 rounded-lg flex items-center justify-center text-2xl">
+                                <i class="fas fa-play text-white"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold">Coffee Shop Jazz Vibes</h3>
+                                <p class="text-gray-200">Relaxing jazz music for your perfect coffee moment</p>
+                            </div>
+                        </div>
+                        <div class="youtube-player">
+                            <iframe width="100%" height="315" src="https://www.youtube.com/embed/KcEbfZvjLt4" frameborder="0" allowfullscreen></iframe>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Genre Pills -->
+                <div class="flex space-x-2 mb-8 overflow-x-auto pb-2">
+                    <div class="genre-pill active" data-genre="all">All</div>
+                    <div class="genre-pill" data-genre="jazz">Jazz</div>
+                    <div class="genre-pill" data-genre="acoustic">Acoustic</div>
+                    <div class="genre-pill" data-genre="lofi">Lo-fi</div>
+                    <div class="genre-pill" data-genre="indie">Indie</div>
+                    <div class="genre-pill" data-genre="ambient">Ambient</div>
+                    <div class="genre-pill" data-genre="bossa">Bossa Nova</div>
+                    <div class="genre-pill" data-genre="folk">Folk</div>
+                </div>
+                
+                <!-- Recently Played -->
+                <section class="mb-12">
+                    <h2 class="text-2xl font-bold mb-6 poppins">Recently played</h2>
+                    <div class="recently-played-grid" id="recentlyPlayedGrid">
+                        <!-- Content will be populated by JavaScript -->
+                    </div>
+                </section>
+                
+                <!-- Made for You -->
+                <section class="mb-12">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-2xl font-bold poppins">Made for you</h2>
+                        <a href="#" class="text-sm text-gray-400 hover:text-white font-semibold hover-lift">Show all</a>
+                    </div>
+                    <div class="section-grid" id="madeForYouGrid">
+                        <!-- Content will be populated by JavaScript -->
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <!-- Liked Songs Section -->
+        <div id="likedSection" class="section">
+            <div class="header-gradient">
+                <div class="flex items-center justify-between mb-8">
+                    <div class="flex items-center space-x-4">
+                        <button class="w-8 h-8 bg-black bg-opacity-50 rounded-full flex items-center justify-center control-button" id="backBtn2">
+                            <i class="fas fa-chevron-left text-sm"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="flex items-start space-x-6 mb-8">
+                    <div class="w-60 h-60 bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg flex items-center justify-center text-6xl text-white shadow-2xl">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <div class="flex-1 pt-4">
+                        <p class="text-sm font-semibold mb-2">PLAYLIST</p>
+                        <h1 class="text-6xl font-bold mb-4 poppins">Liked Songs</h1>
+                        <p class="text-gray-300 mb-4">Your favorite tracks all in one place</p>
+                        <div class="flex items-center space-x-2 text-sm text-gray-300">
+                            <span class="font-semibold">CafeSound</span>
+                            <span>•</span>
+                            <span id="likedSongsCount">0 songs</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="px-8">
+                <div class="flex items-center space-x-6 mb-8">
+                    <button class="main-play-button" id="likedPlayAllBtn">
+                        <i class="fas fa-play ml-1"></i>
+                    </button>
+                </div>
+                
+                <div class="space-y-1" id="likedTracksList">
+                    <div class="text-center py-12 text-gray-400">
+                        <i class="fas fa-heart text-4xl mb-4"></i>
+                        <p class="text-lg">No liked songs yet</p>
+                        <p class="text-sm">Songs you like will appear here</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mega Playlist Section -->
+        <div id="megaPlaylistSection" class="section">
+            <div class="header-gradient">
+                <div class="flex items-center justify-between mb-8">
+                    <div class="flex items-center space-x-4">
+                        <button class="w-8 h-8 bg-black bg-opacity-50 rounded-full flex items-center justify-center control-button" id="backBtn3">
+                            <i class="fas fa-chevron-left text-sm"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="flex items-start space-x-6 mb-8">
+                    <div class="w-60 h-60 bg-gradient-to-br from-green-600 to-blue-600 rounded-lg flex items-center justify-center text-6xl text-white shadow-2xl">
+                        <i class="fas fa-music"></i>
+                    </div>
+                    <div class="flex-1 pt-4">
+                        <p class="text-sm font-semibold mb-2">PLAYLIST</p>
+                        <h1 class="text-6xl font-bold mb-4 poppins">Mega Playlist</h1>
+                        <p class="text-gray-300 mb-4">The ultimate collection of coffee shop music</p>
+                        <div class="flex items-center space-x-2 text-sm text-gray-300">
+                            <span class="font-semibold">CafeSound</span>
+                            <span>•</span>
+                            <span id="megaPlaylistCount">50 songs, 3 hr 15 min</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="px-8">
+                <div class="flex items-center space-x-6 mb-8">
+                    <button class="main-play-button" id="megaPlayAllBtn">
+                        <i class="fas fa-play ml-1"></i>
+                    </button>
+                </div>
+                
+                <div class="space-y-1" id="megaTracksList">
+                    <!-- Content will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Coffee Mood Playlists -->
+        <div id="coffeePlaylistSection" class="section">
+            <div class="header-gradient" id="coffeePlaylistHeader">
+                <!-- Content will be populated by JavaScript -->
+            </div>
+            
+            <div class="px-8">
+                <div class="flex items-center space-x-6 mb-8">
+                    <button class="main-play-button" id="coffeePlayAllBtn">
+                        <i class="fas fa-play ml-1"></i>
+                    </button>
+                </div>
+                
+                <div class="space-y-1" id="coffeeTracksList">
+                    <!-- Content will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Music Player -->
+    <div class="music-player">
+        <!-- Now Playing -->
+        <div class="flex items-center space-x-4 flex-1">
+            <div class="w-14 h-14 bg-gradient-to-br from-amber-400 to-orange-600 rounded flex items-center justify-center text-white" id="playerAlbumArt">
+                <i class="fas fa-sun"></i>
+            </div>
+            <div class="min-w-0">
+                <div class="font-semibold text-sm text-white truncate" id="playerTrackTitle">Morning Brew</div>
+                <div class="text-xs text-gray-400 truncate" id="playerArtist">Café Sessions</div>
+            </div>
+            <button class="heart-button" id="playerHeartBtn">
+                <i class="far fa-heart"></i>
+            </button>
+        </div>
+        
+        <!-- Player Controls -->
+        <div class="flex-1 max-w-2xl">
+            <div class="flex items-center justify-center space-x-4 mb-2">
+                <button class="control-button" id="shuffleBtn">
+                    <i class="fas fa-random text-sm"></i>
+                </button>
+                <button class="control-button" id="prevBtn">
+                    <i class="fas fa-step-backward"></i>
+                </button>
+                <button class="w-8 h-8 bg-white rounded-full flex items-center justify-center text-black hover:scale-105 transition-transform" id="playPauseBtn">
+                    <i class="fas fa-pause text-sm"></i>
+                </button>
+                <button class="control-button" id="nextBtn">
+                    <i class="fas fa-step-forward"></i>
+                </button>
+                <button class="control-button" id="repeatBtn">
+                    <i class="fas fa-redo text-sm"></i>
+                </button>
+            </div>
+            <div class="flex items-center space-x-2 text-xs text-gray-400">
+                <span id="currentTime">1:23</span>
+                <div class="progress-bar flex-1" id="progressBar">
+                    <div class="progress-fill" id="progressFill">
+                        <div class="progress-handle" id="progressHandle"></div>
+                    </div>
+                </div>
+                <span id="totalTime">3:24</span>
+            </div>
+        </div>
+        
+        <!-- Volume Controls -->
+        <div class="flex items-center space-x-2 flex-1 justify-end">
+            <button class="control-button" id="queueBtn">
+                <i class="fas fa-list text-sm"></i>
+            </button>
+            <button class="control-button" id="devicesBtn">
+                <i class="fas fa-desktop text-sm"></i>
+            </button>
+            <button class="control-button" id="volumeBtn">
+                <i class="fas fa-volume-down text-sm"></i>
+            </button>
+            <div class="volume-slider" id="volumeSlider">
+                <div class="volume-fill" id="volumeFill">
+                    <div class="volume-handle" id="volumeHandle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Mobile Menu Toggle -->
+    <button class="fixed top-4 left-4 z-50 md:hidden w-10 h-10 bg-black bg-opacity-50 rounded-full flex items-center justify-center text-white" id="mobileMenuBtn">
+        <i class="fas fa-bars"></i>
+    </button>
+    
+    <script>
+        // Application State
+        let currentTrack = {
+            id: 'morning-brew',
+            title: 'Morning Brew',
+            artist: 'Café Sessions',
+            album: 'Acoustic Mornings',
+            duration: 204,
+            currentTime: 83,
+            isPlaying: true,
+            isLiked: false
+        };
+        
+        let volume = 0.7;
+        let isShuffled = false;
+        let repeatMode = 0;
+        let currentPlaylist = 'morning-acoustic';
+        let likedSongs = [];
+        let userPlaylists = [];
+        let currentSection = 'home';
+        
+        // Track Database with YouTube links
+        const tracks = {
+            'morning-brew': {
+                title: 'Morning Brew',
+                artist: 'Café Sessions',
+                album: 'Acoustic Mornings',
+                duration: 204,
+                gradient: 'from-blue-400 to-purple-500',
+                icon: 'fas fa-music',
+                youtube: 'https://www.youtube.com/watch?v=KcEbfZvjLt4',
+                genre: 'acoustic'
+            },
+            'sunrise-serenade': {
+                title: 'Sunrise Serenade',
+                artist: 'The Coffee Collective',
+                album: 'Dawn Melodies',
+                duration: 252,
+                gradient: 'from-green-400 to-teal-500',
+                icon: 'fas fa-guitar',
+                youtube: 'https://www.youtube.com/watch?v=KcEbfZvjLt4',
+                genre: 'folk'
+            },
+            'golden-hour': {
+                title: 'Golden Hour',
+                artist: 'Indie Folk Ensemble',
+                album: 'Morning Light',
+                duration: 225,
+                gradient: 'from-orange-400 to-red-500',
+                icon: 'fas fa-sun',
+                youtube: 'https://www.youtube.com/watch?v=KcEbfZvjLt4',
+                genre: 'indie'
+            },
+            'gentle-awakening': {
+                title: 'Gentle Awakening',
+                artist: 'Acoustic Dreams',
+                album: 'Soft Mornings',
+                duration: 178,
+                gradient: 'from-purple-400 to-pink-500',
+                icon: 'fas fa-heart',
+                youtube: 'https://www.youtube.com/watch?v=KcEbfZvjLt4',
+                genre: 'ambient'
+            },
+            'fresh-start': {
+                title: 'Fresh Start',
+                artist: 'Morning Vibes',
+                album: 'New Beginnings',
+                duration: 273,
+                gradient: 'from-teal-400 to-blue-500',
+                icon: 'fas fa-leaf',
+                youtube: 'https://www.youtube.com/watch?v=KcEbfZvjLt4',
+                genre: 'lofi'
+            },
+            'jazz-evening': {
+                title: 'Evening Jazz',
+                artist: 'Smooth Jazz Collective',
+                album: 'Night Sessions',
+                duration: 298,
+                gradient: 'from-indigo-500 to-purple-600',
+                icon: 'fas fa-saxophone',
+                youtube: 'https://www.youtube.com/watch?v=KcEbfZvjLt4',
+                genre: 'jazz'
+            },
+            'bossa-nova-sunset': {
+                title: 'Bossa Nova Sunset',
+                artist: 'Brazilian Café',
+                album: 'Tropical Evenings',
+                duration: 234,
+                gradient: 'from-yellow-500 to-orange-600',
+                icon: 'fas fa-palm-tree',
+                youtube: 'https://www.youtube.com/watch?v=KcEbfZvjLt4',
+                genre: 'bossa'
+            },
+            'rainy-day-blues': {
+                title: 'Rainy Day Blues',
+                artist: 'Coffee House Blues',
+                album: 'Stormy Weather',
+                duration: 267,
+                gradient: 'from-gray-500 to-blue-600',
+                icon: 'fas fa-cloud-rain',
+                youtube: 'https://www.youtube.com/watch?v=KcEbfZvjLt4',
+                genre: 'jazz'
+            },
+            'weekend-chill': {
+                title: 'Weekend Chill',
+                artist: 'Lazy Sunday',
+                album: 'Relaxation Mode',
+                duration: 189,
+                gradient: 'from-green-500 to-teal-600',
+                icon: 'fas fa-couch',
+                youtube: 'https://www.youtube.com/watch?v=KcEbfZvjLt4',
+                genre: 'lofi'
+            },
+            'study-focus': {
+                title: 'Study Focus',
+                artist: 'Concentration Sounds',
+                album: 'Deep Work',
+                duration: 312,
+                gradient: 'from-blue-600 to-indigo-700',
+                icon: 'fas fa-book',
+                youtube: 'https://www.youtube.com/watch?v=KcEbfZvjLt4',
+                genre: 'ambient'
+            }
+        };
+        
+        // Coffee Mood Playlists
+        const coffeeMoods = {
+            morning: {
+                title: 'Morning Brew',
+                description: 'Start your day with gentle acoustic melodies',
+                gradient: 'from-amber-400 to-orange-600',
+                icon: 'fas fa-sun',
+                tracks: ['morning-brew', 'sunrise-serenade', 'golden-hour', 'gentle-awakening', 'fresh-start']
+            },
+            afternoon: {
+                title: 'Afternoon Espresso',
+                description: 'Energizing beats for your midday coffee break',
+                gradient: 'from-red-500 to-pink-600',
+                icon: 'fas fa-coffee',
+                tracks: ['jazz-evening', 'bossa-nova-sunset', 'weekend-chill', 'morning-brew', 'golden-hour']
+            },
+            evening: {
+                title: 'Evening Decaf',
+                description: 'Smooth jazz and mellow tunes for evening relaxation',
+                gradient: 'from-purple-600 to-indigo-700',
+                icon: 'fas fa-moon',
+                tracks: ['jazz-evening', 'rainy-day-blues', 'gentle-awakening', 'bossa-nova-sunset', 'weekend-chill']
+            },
+            study: {
+                title: 'Study Sessions',
+                description: 'Focus-enhancing ambient sounds for productivity',
+                gradient: 'from-blue-600 to-teal-600',
+                icon: 'fas fa-graduation-cap',
+                tracks: ['study-focus', 'gentle-awakening', 'fresh-start', 'weekend-chill', 'morning-brew']
+            },
+            weekend: {
+                title: 'Weekend Vibes',
+                description: 'Laid-back tunes for your leisurely weekend coffee',
+                gradient: 'from-green-500 to-emerald-600',
+                icon: 'fas fa-calendar-week',
+                tracks: ['weekend-chill', 'bossa-nova-sunset', 'golden-hour', 'rainy-day-blues', 'fresh-start']
+            }
+        };
+        
+        // Utility Functions
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+        
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            const notificationText = document.getElementById('notificationText');
+            notificationText.textContent = message;
+            notification.classList.add('show');
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+        
+        function updatePlayerUI() {
+            const track = tracks[currentTrack.id] || currentTrack;
+            
+            // Update player info
+            document.getElementById('playerTrackTitle').textContent = track.title;
+            document.getElementById('playerArtist').textContent = track.artist;
+            document.getElementById('currentTime').textContent = formatTime(currentTrack.currentTime);
+            document.getElementById('totalTime').textContent = formatTime(track.duration);
+            
+            // Update progress bar
+            const progressPercent = (currentTrack.currentTime / track.duration) * 100;
+            document.getElementById('progressFill').style.width = `${progressPercent}%`;
+            
+            // Update play/pause button
+            const playPauseBtn = document.getElementById('playPauseBtn');
+            const playPauseIcon = playPauseBtn.querySelector('i');
+            if (currentTrack.isPlaying) {
+                playPauseIcon.className = 'fas fa-pause text-sm';
+            } else {
+                playPauseIcon.className = 'fas fa-play text-sm ml-0.5';
+            }
+            
+            // Update heart button
+            updateHeartButtons();
+            
+            // Update volume
+            document.getElementById('volumeFill').style.width = `${volume * 100}%`;
+            updateVolumeIcon();
+            
+            // Update control buttons
+            document.getElementById('shuffleBtn').classList.toggle('active', isShuffled);
+            document.getElementById('repeatBtn').classList.toggle('active', repeatMode > 0);
+            
+            // Update track lists
+            updateAllTrackLists();
+            
+            // Update play buttons
+            document.querySelectorAll('.play-button').forEach(btn => {
+                btn.classList.remove('playing');
+                const icon = btn.querySelector('i');
+                if (btn.dataset.track === currentTrack.id && currentTrack.isPlaying) {
+                    btn.classList.add('playing');
+                    icon.className = 'fas fa-pause';
+                } else {
+                    icon.className = 'fas fa-play';
+                }
+            });
+        }
+        
+        function updateHeartButtons() {
+            const isLiked = likedSongs.includes(currentTrack.id);
+            currentTrack.isLiked = isLiked;
+            
+            document.querySelectorAll('.heart-button').forEach(btn => {
+                const icon = btn.querySelector('i');
+                if (isLiked) {
+                    icon.className = 'fas fa-heart';
+                    btn.classList.add('liked');
+                } else {
+                    icon.className = 'far fa-heart';
+                    btn.classList.remove('liked');
+                }
+            });
+        }
+        
+        function updateVolumeIcon() {
+            const volumeBtn = document.getElementById('volumeBtn');
+            const volumeIcon = volumeBtn.querySelector('i');
+            if (volume === 0) {
+                volumeIcon.className = 'fas fa-volume-mute text-sm';
+            } else if (volume < 0.5) {
+                volumeIcon.className = 'fas fa-volume-down text-sm';
+            } else {
+                volumeIcon.className = 'fas fa-volume-up text-sm';
+            }
+        }
+        
+        function updateAllTrackLists() {
+            document.querySelectorAll('.track-item').forEach(item => {
+                item.classList.remove('playing');
+                if (item.dataset.track === currentTrack.id) {
+                    item.classList.add('playing');
+                }
+            });
+        }
+        
+        function playTrack(trackId) {
+            if (tracks[trackId]) {
+                currentTrack.id = trackId;
+                currentTrack.title = tracks[trackId].title;
+                currentTrack.artist = tracks[trackId].artist;
+                currentTrack.currentTime = 0;
+                currentTrack.isPlaying = true;
+                
+                updatePlayerUI();
+                showNotification(`Now playing: ${tracks[trackId].title}`);
+            }
+        }
+        
+        function togglePlayPause() {
+            currentTrack.isPlaying = !currentTrack.isPlaying;
+            updatePlayerUI();
+            
+            if (currentTrack.isPlaying) {
+                showNotification('Resumed playback');
+            } else {
+                showNotification('Paused playback');
+            }
+        }
+        
+        function nextTrack() {
+            const trackIds = Object.keys(tracks);
+            const currentIndex = trackIds.indexOf(currentTrack.id);
+            const nextIndex = (currentIndex + 1) % trackIds.length;
+            playTrack(trackIds[nextIndex]);
+        }
+        
+        function prevTrack() {
+            const trackIds = Object.keys(tracks);
+            const currentIndex = trackIds.indexOf(currentTrack.id);
+            const prevIndex = currentIndex > 0 ? currentIndex - 1 : trackIds.length - 1;
+            playTrack(trackIds[prevIndex]);
+        }
+        
+        function toggleShuffle() {
+            isShuffled = !isShuffled;
+            updatePlayerUI();
+            showNotification(isShuffled ? 'Shuffle on' : 'Shuffle off');
+        }
+        
+        function toggleRepeat() {
+            repeatMode = (repeatMode + 1) % 3;
+            updatePlayerUI();
+            const messages = ['Repeat off', 'Repeat all', 'Repeat one'];
+            showNotification(messages[repeatMode]);
+        }
+        
+        function toggleLike() {
+            const trackId = currentTrack.id;
+            if (likedSongs.includes(trackId)) {
+                likedSongs = likedSongs.filter(id => id !== trackId);
+                showNotification('Removed from Liked Songs');
+            } else {
+                likedSongs.push(trackId);
+                showNotification('Added to Liked Songs');
+            }
+            
+            updatePlayerUI();
+            updateLikedSongsSection();
+            saveLikedSongs();
+        }
+        
+        function updateLikedSongsSection() {
+            const likedTracksList = document.getElementById('likedTracksList');
+            const likedSongsCount = document.getElementById('likedSongsCount');
+            
+            likedSongsCount.textContent = `${likedSongs.length} songs`;
+            
+            if (likedSongs.length === 0) {
+                likedTracksList.innerHTML = `
+                    <div class="text-center py-12 text-gray-400">
+                        <i class="fas fa-heart text-4xl mb-4"></i>
+                        <p class="text-lg">No liked songs yet</p>
+                        <p class="text-sm">Songs you like will appear here</p>
+                    </div>
+                `;
+            } else {
+                likedTracksList.innerHTML = generateTrackListHTML(likedSongs);
+            }
+        }
+        
+        function generateTrackListHTML(trackIds) {
+            let html = `
+                <div class="grid grid-cols-12 gap-4 px-4 py-2 text-sm text-gray-400 border-b border-gray-700">
+                    <div class="col-span-1">#</div>
+                    <div class="col-span-5">TITLE</div>
+                    <div class="col-span-3">ALBUM</div>
+                    <div class="col-span-2">YOUTUBE</div>
+                    <div class="col-span-1 text-right">
+                        <i class="far fa-clock"></i>
+                    </div>
+                </div>
+            `;
+            
+            trackIds.forEach((trackId, index) => {
+                const track = tracks[trackId];
+                if (track) {
+                    html += `
+                        <div class="track-item grid grid-cols-12 gap-4 hover:bg-white hover:bg-opacity-10 rounded" data-track="${trackId}">
+                            <div class="col-span-1 track-number">${index + 1}</div>
+                            <div class="col-span-5 flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-gradient-to-br ${track.gradient} rounded flex items-center justify-center text-white text-xs">
+                                    <i class="${track.icon}"></i>
+                                </div>
+                                <div class="track-info">
+                                    <h4>${track.title}</h4>
+                                    <p>${track.artist}</p>
+                                </div>
+                            </div>
+                            <div class="col-span-3 text-gray-400 text-sm flex items-center">${track.album}</div>
+                            <div class="col-span-2 flex items-center">
+                                <button class="youtube-link" onclick="window.open('${track.youtube}', '_blank')">
+                                    <i class="fab fa-youtube mr-1"></i>Watch
+                                </button>
+                            </div>
+                            <div class="col-span-1 text-right text-gray-400 text-sm flex items-center justify-end track-duration">${formatTime(track.duration)}</div>
+                        </div>
+                    `;
+                }
+            });
+            
+            return html;
+        }
+        
+        function updateMegaPlaylist() {
+            const megaTracksList = document.getElementById('megaTracksList');
+            const allTrackIds = Object.keys(tracks);
+            megaTracksList.innerHTML = generateTrackListHTML(allTrackIds);
+        }
+        
+        function showSection(sectionName) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Show selected section
+            const targetSection = document.getElementById(sectionName + 'Section');
+            if (targetSection) {
+                targetSection.classList.add('active');
+                currentSection = sectionName;
+            }
+            
+            // Update navigation
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            const activeNavItem = document.querySelector(`[data-section="${sectionName}"]`);
+            if (activeNavItem) {
+                activeNavItem.classList.add('active');
+            }
+        }
+        
+        function showCoffeeMoodPlaylist(moodId) {
+            const mood = coffeeMoods[moodId];
+            if (!mood) return;
+            
+            showSection('coffeePlaylist');
+            
+            const header = document.getElementById('coffeePlaylistHeader');
+            header.innerHTML = `
+                <div class="flex items-center justify-between mb-8">
+                    <div class="flex items-center space-x-4">
+                        <button class="w-8 h-8 bg-black bg-opacity-50 rounded-full flex items-center justify-center control-button" onclick="showSection('home')">
+                            <i class="fas fa-chevron-left text-sm"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="flex items-start space-x-6 mb-8">
+                    <div class="w-60 h-60 bg-gradient-to-br ${mood.gradient} rounded-lg flex items-center justify-center text-6xl text-white shadow-2xl">
+                        <i class="${mood.icon}"></i>
+                        ${mood.icon.includes('coffee') ? '<div class="coffee-steam" style="top: 20%; left: 30%; animation-delay: 0s;"></div><div class="coffee-steam" style="top: 25%; right: 35%; animation-delay: 1s;"></div>' : ''}
+                    </div>
+                    <div class="flex-1 pt-4">
+                        <p class="text-sm font-semibold mb-2">PLAYLIST</p>
+                        <h1 class="text-6xl font-bold mb-4 poppins">${mood.title}</h1>
+                        <p class="text-gray-300 mb-4">${mood.description}</p>
+                        <div class="flex items-center space-x-2 text-sm text-gray-300">
+                            <span class="font-semibold">CafeSound</span>
+                            <span>•</span>
+                            <span>${mood.tracks.length} songs</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            const tracksList = document.getElementById('coffeeTracksList');
+            tracksList.innerHTML = generateTrackListHTML(mood.tracks);
+        }
+        
+        function createPlaylist() {
+            const nameInput = document.getElementById('playlistNameInput');
+            const descInput = document.getElementById('playlistDescInput');
+            
+            const name = nameInput.value.trim();
+            const description = descInput.value.trim();
+            
+            if (!name) {
+                showNotification('Please enter a playlist name');
+                return;
+            }
+            
+            const playlist = {
+                id: 'user_' + Date.now(),
+                name: name,
+                description: description || 'Created by you',
+                tracks: [],
+                createdAt: new Date().toISOString()
+            };
+            
+            userPlaylists.push(playlist);
+            updateUserPlaylistsUI();
+            closeCreatePlaylistModal();
+            showNotification(`Created playlist: ${name}`);
+            saveUserPlaylists();
+        }
+        
+        function updateUserPlaylistsUI() {
+            const userPlaylistsList = document.getElementById('userPlaylistsList');
+            
+            if (userPlaylists.length === 0) {
+                userPlaylistsList.innerHTML = '';
+                return;
+            }
+            
+            userPlaylistsList.innerHTML = userPlaylists.map(playlist => `
+                <a href="#" class="nav-item text-sm user-playlist" data-playlist="${playlist.id}">
+                    <i class="fas fa-music"></i>
+                    ${playlist.name}
+                </a>
+            `).join('');
+            
+            // Add event listeners to new playlist items
+            document.querySelectorAll('.user-playlist').forEach(item => {
+                item.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const playlistId = item.dataset.playlist;
+                    showUserPlaylist(playlistId);
+                });
+            });
+        }
+        
+        function showUserPlaylist(playlistId) {
+            const playlist = userPlaylists.find(p => p.id === playlistId);
+            if (!playlist) return;
+            
+            showNotification(`Opened playlist: ${playlist.name}`);
+        }
+        
+        function closeCreatePlaylistModal() {
+            document.getElementById('createPlaylistModal').classList.remove('show');
+            document.getElementById('playlistNameInput').value = '';
+            document.getElementById('playlistDescInput').value = '';
+        }
+        
+        function populateHomeContent() {
+            // Recently Played
+            const recentlyPlayedGrid = document.getElementById('recentlyPlayedGrid');
+            const recentTracks = ['morning-brew', 'jazz-evening', 'bossa-nova-sunset', 'weekend-chill', 'study-focus', 'golden-hour'];
+            
+            recentlyPlayedGrid.innerHTML = recentTracks.map(trackId => {
+                const track = tracks[trackId];
+                return `
+                    <div class="spotify-card" data-playlist="${trackId}">
+                        <div class="album-art bg-gradient-to-br ${track.gradient}">
+                            <i class="${track.icon}"></i>
+                        </div>
+                        <h3 class="font-semibold mb-2 text-white">${track.title}</h3>
+                        <p class="text-sm text-gray-400">${track.artist}</p>
+                        <button class="play-button" data-track="${trackId}">
+                            <i class="fas fa-play"></i>
+                        </button>
+                    </div>
+                `;
+            }).join('');
+            
+            // Made for You
+            const madeForYouGrid = document.getElementById('madeForYouGrid');
+            const madeForYouTracks = ['gentle-awakening', 'rainy-day-blues', 'fresh-start', 'sunrise-serenade'];
+            
+            madeForYouGrid.innerHTML = madeForYouTracks.map(trackId => {
+                const track = tracks[trackId];
+                return `
+                    <div class="spotify-card" data-playlist="${trackId}">
+                        <div class="album-art bg-gradient-to-br ${track.gradient}">
+                            <i class="${track.icon}"></i>
+                        </div>
+                        <h3 class="font-semibold mb-2 text-white">${track.title}</h3>
+                        <p class="text-sm text-gray-400">Made for you</p>
+                        <button class="play-button" data-track="${trackId}">
+                            <i class="fas fa-play"></i>
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // Local Storage Functions
+        function saveLikedSongs() {
+            localStorage.setItem('cafesound_liked_songs', JSON.stringify(likedSongs));
+        }
+        
+        function loadLikedSongs() {
+            const saved = localStorage.getItem('cafesound_liked_songs');
+            if (saved) {
+                likedSongs = JSON.parse(saved);
+            }
+        }
+        
+        function saveUserPlaylists() {
+            localStorage.setItem('cafesound_user_playlists', JSON.stringify(userPlaylists));
+        }
+        
+        function loadUserPlaylists() {
+            const saved = localStorage.getItem('cafesound_user_playlists');
+            if (saved) {
+                userPlaylists = JSON.parse(saved);
+            }
+        }
+        
+        // Event Listeners
+        
+        // Mobile menu toggle
+        document.getElementById('mobileMenuBtn').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('open');
+        });
+        
+        // Play buttons (delegated event listener)
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('play-button') || e.target.closest('.play-button')) {
+                e.stopPropagation();
+                const btn = e.target.classList.contains('play-button') ? e.target : e.target.closest('.play-button');
+                const trackId = btn.dataset.track;
+                
+                if (trackId === currentTrack.id && currentTrack.isPlaying) {
+                    togglePlayPause();
+                } else {
+                    playTrack(trackId);
+                }
+            }
+        });
+        
+        // Track items (delegated event listener)
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('track-item') || e.target.closest('.track-item')) {
+                const item = e.target.classList.contains('track-item') ? e.target : e.target.closest('.track-item');
+                const trackId = item.dataset.track;
+                if (trackId) {
+                    playTrack(trackId);
+                }
+            }
+        });
+        
+        // Player controls
+        document.getElementById('playPauseBtn').addEventListener('click', togglePlayPause);
+        document.getElementById('nextBtn').addEventListener('click', nextTrack);
+        document.getElementById('prevBtn').addEventListener('click', prevTrack);
+        document.getElementById('shuffleBtn').addEventListener('click', toggleShuffle);
+        document.getElementById('repeatBtn').addEventListener('click', toggleRepeat);
+        document.getElementById('playerHeartBtn').addEventListener('click', toggleLike);
+        
+        // Progress bar
+        document.getElementById('progressBar').addEventListener('click', (e) => {
+            const rect = e.target.getBoundingClientRect();
+            const percent = (e.clientX - rect.left) / rect.width;
+            const track = tracks[currentTrack.id];
+            if (track) {
+                currentTrack.currentTime = Math.floor(percent * track.duration);
+                updatePlayerUI();
+            }
+        });
+        
+        // Volume slider with real functionality
+        document.getElementById('volumeSlider').addEventListener('click', (e) => {
+            const rect = e.target.getBoundingClientRect();
+            volume = (e.clientX - rect.left) / rect.width;
+            volume = Math.max(0, Math.min(1, volume));
+            updatePlayerUI();
+            showNotification(`Volume: ${Math.round(volume * 100)}%`);
+        });
+        
+        // Volume button mute toggle
+        document.getElementById('volumeBtn').addEventListener('click', () => {
+            if (volume > 0) {
+                volume = 0;
+            } else {
+                volume = 0.7;
+            }
+            updatePlayerUI();
+            showNotification(volume === 0 ? 'Muted' : 'Unmuted');
+        });
+        
+        // Navigation items
+        document.querySelectorAll('.nav-item[data-section]').forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                const section = item.dataset.section;
+                showSection(section);
+            });
+        });
+        
+        // Coffee mood playlists
+        document.querySelectorAll('.playlist-nav').forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                const playlist = item.dataset.playlist;
+                showCoffeeMoodPlaylist(playlist);
+            });
+        });
+        
+        // Create playlist button
+        document.getElementById('createPlaylistBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            document.getElementById('createPlaylistModal').classList.add('show');
+        });
+        
+        // Modal close on background click
+        document.getElementById('createPlaylistModal').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) {
+                closeCreatePlaylistModal();
+            }
+        });
+        
+        // Genre pills
+        document.querySelectorAll('.genre-pill').forEach(pill => {
+            pill.addEventListener('click', () => {
+                document.querySelectorAll('.genre-pill').forEach(p => p.classList.remove('active'));
+                pill.classList.add('active');
+                
+                const genre = pill.dataset.genre;
+                showNotification(`Filtering by ${genre === 'all' ? 'all genres' : genre}`);
+            });
+        });
+        
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            if (query.length > 2) {
+                showNotification(`Searching for "${query}"`);
+            }
+        });
+        
+        // Simulate progress
+        setInterval(() => {
+            if (currentTrack.isPlaying) {
+                const track = tracks[currentTrack.id];
+                if (track && currentTrack.currentTime < track.duration) {
+                    currentTrack.currentTime += 1;
+                    updatePlayerUI();
+                } else if (track && currentTrack.currentTime >= track.duration) {
+                    if (repeatMode === 2) {
+                        currentTrack.currentTime = 0;
+                    } else {
+                        nextTrack();
+                    }
+                }
+            }
+        }, 1000);
+        
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+            
+            switch(e.code) {
+                case 'Space':
+                    e.preventDefault();
+                    togglePlayPause();
+                    break;
+                case 'ArrowRight':
+                    e.preventDefault();
+                    nextTrack();
+                    break;
+                case 'ArrowLeft':
+                    e.preventDefault();
+                    prevTrack();
+                    break;
+                case 'ArrowUp':
+                    e.preventDefault();
+                    volume = Math.min(1, volume + 0.1);
+                    updatePlayerUI();
+                    showNotification(`Volume: ${Math.round(volume * 100)}%`);
+                    break;
+                case 'ArrowDown':
+                    e.preventDefault();
+                    volume = Math.max(0, volume - 0.1);
+                    updatePlayerUI();
+                    showNotification(`Volume: ${Math.round(volume * 100)}%`);
+                    break;
+            }
+        });
+        
+        // Initialize
+        function initialize() {
+            loadLikedSongs();
+            loadUserPlaylists();
+            populateHomeContent();
+            updatePlayerUI();
+            updateLikedSongsSection();
+            updateMegaPlaylist();
+            updateUserPlaylistsUI();
+            
+            // Dynamic greeting
+            const hour = new Date().getHours();
+            let greeting = 'Good afternoon';
+            if (hour < 12) greeting = 'Good morning';
+            else if (hour >= 18) greeting = 'Good evening';
+            
+            document.getElementById('mainTitle').textContent = greeting;
+            
+            // Welcome notification
+            setTimeout(() => {
+                showNotification('Welcome to CafeSound! ☕🎵');
+            }, 1000);
+        }
+        
+        // Start the app
+        initialize();
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97dac78195fd4544',t:'MTc1NzYzMTYwNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
