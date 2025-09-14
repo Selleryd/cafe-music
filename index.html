@@ -1975,35 +1975,52 @@
                         </div>
                         
                         <!-- Mobile Layout -->
-                        <div class="track-item md:hidden bg-gray-800 rounded-lg p-4 mb-3 hover:bg-gray-700 transition-colors" data-track="${trackId}">
-                            <div class="flex items-center space-x-3 mb-3">
-                                <div class="w-12 h-12 bg-gradient-to-br ${track.gradient} rounded flex items-center justify-center text-white">
+                        <div class="track-item md:hidden bg-gray-800 rounded-lg p-5 mb-4 hover:bg-gray-700 transition-colors" data-track="${trackId}">
+                            <!-- Track Info Row -->
+                            <div class="flex items-center space-x-4 mb-4">
+                                <div class="w-14 h-14 bg-gradient-to-br ${track.gradient} rounded-lg flex items-center justify-center text-white flex-shrink-0">
                                     <i class="${track.icon}"></i>
                                 </div>
                                 <div class="flex-1 min-w-0">
-                                    <h4 class="font-medium text-white truncate">${track.title}</h4>
-                                    <p class="text-sm text-gray-400 truncate">${track.artist}</p>
-                                    <p class="text-xs text-gray-500">${formatPlays(track.plays)} plays • ${formatTime(track.duration)}</p>
+                                    <h4 class="font-semibold text-white text-base mb-1">${track.title}</h4>
+                                    <p class="text-sm text-gray-400 mb-1">${track.artist}</p>
+                                    <p class="text-sm text-gray-300 font-medium">${track.album}</p>
                                 </div>
-                                <button class="heart-button track-heart-btn ${isLiked ? 'liked' : ''}" data-track="${trackId}" onclick="event.stopPropagation(); toggleTrackLike('${trackId}')" title="Like track">
+                                <button class="heart-button track-heart-btn ${isLiked ? 'liked' : ''} p-3" data-track="${trackId}" onclick="event.stopPropagation(); toggleTrackLike('${trackId}')" title="Like track">
                                     <i class="${isLiked ? 'fas' : 'far'} fa-heart text-lg"></i>
                                 </button>
                             </div>
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center space-x-2">
-                                    <button class="youtube-link text-xs px-3 py-2" onclick="event.stopPropagation(); window.open('${track.youtube}', '_blank')">
-                                        <i class="fab fa-youtube mr-1"></i>Watch
+                            
+                            <!-- Stats Row -->
+                            <div class="flex items-center justify-between mb-4 text-sm">
+                                <div class="flex items-center space-x-4">
+                                    <span class="text-gray-300 font-medium">
+                                        <i class="fas fa-play-circle mr-1"></i>
+                                        ${formatPlays(track.plays)} plays
+                                    </span>
+                                    <span class="text-gray-400">
+                                        <i class="far fa-clock mr-1"></i>
+                                        ${formatTime(track.duration)}
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <!-- Action Buttons Row -->
+                            <div class="grid grid-cols-2 gap-3">
+                                <div class="flex space-x-2">
+                                    <button class="youtube-link flex-1 text-sm py-3 px-4 rounded-lg font-medium" onclick="event.stopPropagation(); window.open('${track.youtube}', '_blank')">
+                                        <i class="fab fa-youtube mr-2"></i>Watch
                                     </button>
-                                    <button class="share-button text-xs px-3 py-2" onclick="event.stopPropagation(); shareTrack('${trackId}')" title="Share track">
-                                        <i class="fas fa-share mr-1"></i>Share
+                                    <button class="share-button flex-1 text-sm py-3 px-4 rounded-lg font-medium" onclick="event.stopPropagation(); shareTrack('${trackId}')" title="Share track">
+                                        <i class="fas fa-share mr-2"></i>Share
                                     </button>
                                 </div>
-                                <div class="flex items-center space-x-2">
-                                    <button class="control-button" data-track="${trackId}" onclick="event.stopPropagation(); showAddToPlaylistModal('${trackId}')" title="Add to playlist">
-                                        <i class="fas fa-plus text-sm"></i>
+                                <div class="flex space-x-2">
+                                    <button class="control-button bg-gray-600 hover:bg-gray-500 text-white py-3 px-4 rounded-lg flex-1" data-track="${trackId}" onclick="event.stopPropagation(); showAddToPlaylistModal('${trackId}')" title="Add to playlist">
+                                        <i class="fas fa-plus mr-2"></i>Add
                                     </button>
-                                    <button class="control-button bg-green-500 hover:bg-green-600 text-black" onclick="event.stopPropagation(); playTrack('${trackId}')" title="Play track">
-                                        <i class="fas fa-play text-sm"></i>
+                                    <button class="control-button bg-green-500 hover:bg-green-600 text-black py-3 px-4 rounded-lg flex-1 font-medium" onclick="event.stopPropagation(); playTrack('${trackId}')" title="Play track">
+                                        <i class="fas fa-play mr-2"></i>Play
                                     </button>
                                 </div>
                             </div>
@@ -2288,7 +2305,7 @@
             const shareData = {
                 title: `${track.title} by ${track.artist}`,
                 text: `Check out this amazing track: ${track.title} by ${track.artist} on CafeSound! ☕🎵`,
-                url: track.youtube
+                url: 'https://selleryd.github.io/cafe-music'
             };
             
             // Check if Web Share API is supported
@@ -2694,5 +2711,5 @@
         // Start the app
         initialize();
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97f0c3adf42fd677',t:'MTc1Nzg2MjEzNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97f0cee81305424d',t:'MTc1Nzg2MjU5NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
