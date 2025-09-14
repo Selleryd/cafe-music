@@ -31,6 +31,7 @@
             margin: 0;
             padding: 0;
             overflow-x: hidden;
+            scroll-behavior: smooth;
         }
         
         .poppins {
@@ -673,15 +674,31 @@
             }
             
             .track-item {
-                grid-template-columns: 16px 1fr auto;
+                grid-template-columns: 16px 1fr auto auto;
                 gap: 8px;
-                padding: 8px 12px;
+                padding: 12px;
+                border-radius: 8px;
+                margin: 4px 0;
             }
             
             .track-item .col-span-2:nth-child(3),
-            .track-item .col-span-2:nth-child(4),
-            .track-item .col-span-2:nth-child(5) {
+            .track-item .col-span-2:nth-child(4) {
                 display: none;
+            }
+            
+            .track-item .col-span-3:nth-child(5) {
+                grid-column: span 1;
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+                align-items: center;
+            }
+            
+            .track-item .col-span-3:nth-child(5) button {
+                min-width: 32px;
+                min-height: 32px;
+                padding: 6px;
+                font-size: 12px;
             }
             
             .px-8 {
@@ -697,6 +714,10 @@
                 font-size: 2.5rem !important;
             }
             
+            .ml-8 {
+                margin-left: 1rem !important;
+            }
+            
             .w-60.h-60 {
                 width: 120px !important;
                 height: 120px !important;
@@ -706,6 +727,46 @@
                 flex-direction: column;
                 space-x: 0;
                 gap: 16px;
+            }
+            
+            /* Mobile Touch Optimizations */
+            .control-button {
+                min-width: 44px;
+                min-height: 44px;
+                padding: 12px;
+            }
+            
+            .heart-button {
+                min-width: 44px;
+                min-height: 44px;
+                padding: 12px;
+            }
+            
+            .share-button, .youtube-link {
+                padding: 8px 12px;
+                font-size: 14px;
+                min-height: 36px;
+            }
+            
+            .nav-item {
+                padding: 16px 12px;
+                font-size: 16px;
+            }
+            
+            .genre-pill {
+                padding: 12px 20px;
+                font-size: 16px;
+                min-height: 44px;
+            }
+            
+            .spotify-card {
+                padding: 20px;
+            }
+            
+            .play-button {
+                width: 56px;
+                height: 56px;
+                font-size: 18px;
             }
         }
         
@@ -798,6 +859,34 @@
         
         .hover-lift:hover {
             transform: translateY(-2px);
+        }
+        
+        /* Desktop Optimizations */
+        @media (min-width: 769px) {
+            .track-item:hover {
+                background: rgba(255, 255, 255, 0.1);
+                transform: translateY(-1px);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            }
+            
+            .spotify-card:hover {
+                transform: translateY(-6px);
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+            }
+            
+            .control-button:hover {
+                transform: scale(1.15);
+            }
+            
+            .nav-item:hover {
+                padding-left: 16px;
+                background: rgba(255, 255, 255, 0.15);
+            }
+            
+            .genre-pill:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            }
         }
         
         /* Search Bar styles removed */
@@ -975,29 +1064,28 @@
         <div class="coffee-bean" style="top: 80%; left: 60%; animation-delay: 4s;"></div>
     </div>
     
-<!-- Main Content -->
-<div class="main-content">
-    <!-- Home Section -->
-    <div id="homeSection" class="section active">
-        <!-- Header -->
-        <div class="header-gradient">
-            <div class="flex items-center justify-between mb-8">
-                <div class="flex items-center space-x-4">
-                    <!-- left content (if any) -->
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Home Section -->
+        <div id="homeSection" class="section active">
+            <!-- Header -->
+            <div class="header-gradient">
+                <div class="flex items-center justify-between mb-8">
+                    <div class="flex items-center space-x-4">
+                        <button class="w-8 h-8 bg-black bg-opacity-50 rounded-full flex items-center justify-center control-button" id="backBtn">
+                            <i class="fas fa-chevron-left text-sm"></i>
+                        </button>
+                        <button class="w-8 h-8 bg-black bg-opacity-50 rounded-full flex items-center justify-center control-button" id="forwardBtn">
+                            <i class="fas fa-chevron-right text-sm"></i>
+                        </button>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <!-- Removed search, upgrade, and profile buttons -->
+                    </div>
                 </div>
-                <div class="flex items-center space-x-4">
-                    <!-- Removed search, upgrade, and profile buttons -->
-                </div>
-            </div>
-
-            <!-- ✅ Only these two lines get padding-left -->
-            <h1 class="text-4xl font-bold mb-2 poppins pl-[30px]" id="mainTitle">
-                Good morning
-            </h1>
-            <p class="text-lg opacity-80 pl-[30px]" id="mainSubtitle">
-                Perfect coffee music for your day
-            </p>
-        </div>
+                
+                <h1 class="text-4xl font-bold mb-2 poppins" id="mainTitle">Good afternoon</h1>
+                <p class="text-lg opacity-80" id="mainSubtitle">Perfect coffee music for your day</p>
             </div>
             
             <div class="px-8">
@@ -1648,14 +1736,60 @@
         }
         
         function nextTrack() {
-            const trackIds = Object.keys(tracks);
+            let trackIds;
+            
+            // Determine which playlist we're currently playing from
+            if (currentPlaylist === 'liked') {
+                trackIds = likedSongs;
+            } else if (currentPlaylist === 'mega') {
+                trackIds = Object.keys(tracks);
+            } else if (coffeeMoods[currentPlaylist]) {
+                trackIds = coffeeMoods[currentPlaylist].tracks;
+            } else {
+                // Find user playlist
+                const userPlaylist = userPlaylists.find(p => p.id === currentPlaylist);
+                if (userPlaylist) {
+                    trackIds = userPlaylist.tracks;
+                } else {
+                    trackIds = Object.keys(tracks);
+                }
+            }
+            
+            if (trackIds.length === 0) {
+                showNotification('No tracks in current playlist');
+                return;
+            }
+            
             const currentIndex = trackIds.indexOf(currentTrack.id);
             const nextIndex = (currentIndex + 1) % trackIds.length;
             playTrack(trackIds[nextIndex]);
         }
         
         function prevTrack() {
-            const trackIds = Object.keys(tracks);
+            let trackIds;
+            
+            // Determine which playlist we're currently playing from
+            if (currentPlaylist === 'liked') {
+                trackIds = likedSongs;
+            } else if (currentPlaylist === 'mega') {
+                trackIds = Object.keys(tracks);
+            } else if (coffeeMoods[currentPlaylist]) {
+                trackIds = coffeeMoods[currentPlaylist].tracks;
+            } else {
+                // Find user playlist
+                const userPlaylist = userPlaylists.find(p => p.id === currentPlaylist);
+                if (userPlaylist) {
+                    trackIds = userPlaylist.tracks;
+                } else {
+                    trackIds = Object.keys(tracks);
+                }
+            }
+            
+            if (trackIds.length === 0) {
+                showNotification('No tracks in current playlist');
+                return;
+            }
+            
             const currentIndex = trackIds.indexOf(currentTrack.id);
             const prevIndex = currentIndex > 0 ? currentIndex - 1 : trackIds.length - 1;
             playTrack(trackIds[prevIndex]);
@@ -1739,10 +1873,10 @@
             let html = `
                 <div class="grid grid-cols-12 gap-4 px-4 py-2 text-sm text-gray-400 border-b border-gray-700">
                     <div class="col-span-1">#</div>
-                    <div class="col-span-4">TITLE</div>
+                    <div class="col-span-3">TITLE</div>
                     <div class="col-span-2">ALBUM</div>
-                    <div class="col-span-2">YOUTUBE</div>
-                    <div class="col-span-2 text-center">ACTIONS</div>
+                    <div class="col-span-2">LINKS</div>
+                    <div class="col-span-3 text-center">ACTIONS</div>
                     <div class="col-span-1 text-right">
                         <i class="far fa-clock"></i>
                     </div>
@@ -1756,7 +1890,7 @@
                     html += `
                         <div class="track-item grid grid-cols-12 gap-4 hover:bg-white hover:bg-opacity-10 rounded" data-track="${trackId}">
                             <div class="col-span-1 track-number">${index + 1}</div>
-                            <div class="col-span-4 flex items-center space-x-3">
+                            <div class="col-span-3 flex items-center space-x-3">
                                 <div class="w-10 h-10 bg-gradient-to-br ${track.gradient} rounded flex items-center justify-center text-white text-xs">
                                     <i class="${track.icon}"></i>
                                 </div>
@@ -1766,17 +1900,23 @@
                                 </div>
                             </div>
                             <div class="col-span-2 text-gray-400 text-sm flex items-center">${track.album}</div>
-                            <div class="col-span-2 flex items-center">
+                            <div class="col-span-2 flex items-center space-x-1">
                                 <button class="youtube-link" onclick="window.open('${track.youtube}', '_blank')">
                                     <i class="fab fa-youtube mr-1"></i>Watch
                                 </button>
+                                <button class="share-button" onclick="shareTrack('${trackId}')" title="Share track">
+                                    <i class="fas fa-share mr-1"></i>Share
+                                </button>
                             </div>
-                            <div class="col-span-2 flex items-center justify-center space-x-2">
-                                <button class="heart-button track-heart-btn ${isLiked ? 'liked' : ''}" data-track="${trackId}" onclick="toggleTrackLike('${trackId}')">
+                            <div class="col-span-3 flex items-center justify-center space-x-2">
+                                <button class="heart-button track-heart-btn ${isLiked ? 'liked' : ''}" data-track="${trackId}" onclick="toggleTrackLike('${trackId}')" title="Like track">
                                     <i class="${isLiked ? 'fas' : 'far'} fa-heart"></i>
                                 </button>
                                 <button class="control-button add-to-playlist-btn" data-track="${trackId}" onclick="showAddToPlaylistModal('${trackId}')" title="Add to playlist">
                                     <i class="fas fa-plus text-sm"></i>
+                                </button>
+                                <button class="control-button" onclick="playTrack('${trackId}')" title="Play track">
+                                    <i class="fas fa-play text-sm"></i>
                                 </button>
                             </div>
                             <div class="col-span-1 text-right text-gray-400 text-sm flex items-center justify-end track-duration">${formatTime(track.duration)}</div>
@@ -1854,6 +1994,16 @@
             
             const tracksList = document.getElementById('coffeeTracksList');
             tracksList.innerHTML = generateTrackListHTML(mood.tracks);
+            
+            // Update the coffee play button to play this specific mood's tracks
+            const coffeePlayBtn = document.getElementById('coffeePlayAllBtn');
+            coffeePlayBtn.onclick = () => {
+                if (mood.tracks.length > 0) {
+                    currentPlaylist = moodId;
+                    playTrack(mood.tracks[0]);
+                    showNotification(`Playing ${mood.title}`);
+                }
+            };
         }
         
         function createPlaylist() {
@@ -1954,6 +2104,18 @@
                 tracksList.innerHTML = generateTrackListHTML(playlist.tracks);
             }
             
+            // Update the coffee play button to play this specific playlist's tracks
+            const coffeePlayBtn = document.getElementById('coffeePlayAllBtn');
+            coffeePlayBtn.onclick = () => {
+                if (playlist.tracks.length > 0) {
+                    currentPlaylist = playlistId;
+                    playTrack(playlist.tracks[0]);
+                    showNotification(`Playing ${playlist.name}`);
+                } else {
+                    showNotification('Playlist is empty');
+                }
+            };
+            
             showNotification(`Opened playlist: ${playlist.name}`);
         }
         
@@ -2030,6 +2192,58 @@
         function createNewPlaylistFromModal() {
             closeAddToPlaylistModal();
             document.getElementById('createPlaylistModal').classList.add('show');
+        }
+        
+        function shareTrack(trackId) {
+            const track = tracks[trackId];
+            if (!track) return;
+            
+            const shareData = {
+                title: `${track.title} by ${track.artist}`,
+                text: `Check out this amazing track: ${track.title} by ${track.artist} on CafeSound! ☕🎵`,
+                url: track.youtube
+            };
+            
+            // Check if Web Share API is supported
+            if (navigator.share) {
+                navigator.share(shareData)
+                    .then(() => showNotification('Track shared successfully!'))
+                    .catch((error) => {
+                        console.log('Error sharing:', error);
+                        fallbackShare(shareData);
+                    });
+            } else {
+                fallbackShare(shareData);
+            }
+        }
+        
+        function fallbackShare(shareData) {
+            // Fallback: Copy to clipboard
+            const shareText = `${shareData.text}\n${shareData.url}`;
+            
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(shareText)
+                    .then(() => showNotification('Link copied to clipboard!'))
+                    .catch(() => {
+                        // Final fallback: Create temporary textarea
+                        const textarea = document.createElement('textarea');
+                        textarea.value = shareText;
+                        document.body.appendChild(textarea);
+                        textarea.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(textarea);
+                        showNotification('Link copied to clipboard!');
+                    });
+            } else {
+                // Final fallback for older browsers
+                const textarea = document.createElement('textarea');
+                textarea.value = shareText;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                showNotification('Link copied to clipboard!');
+            }
         }
         
         function updateVideoSlideshow() {
@@ -2258,6 +2472,33 @@
             });
         });
         
+        // Liked Songs Play All Button
+        document.getElementById('likedPlayAllBtn').addEventListener('click', () => {
+            if (likedSongs.length > 0) {
+                currentPlaylist = 'liked';
+                playTrack(likedSongs[0]);
+                showNotification('Playing Liked Songs');
+            } else {
+                showNotification('No liked songs to play');
+            }
+        });
+        
+        // Mega Playlist Play All Button
+        document.getElementById('megaPlayAllBtn').addEventListener('click', () => {
+            const allTrackIds = Object.keys(tracks);
+            if (allTrackIds.length > 0) {
+                currentPlaylist = 'mega';
+                playTrack(allTrackIds[0]);
+                showNotification('Playing Mega Playlist');
+            }
+        });
+        
+        // Coffee Playlist Play All Button
+        document.getElementById('coffeePlayAllBtn').addEventListener('click', () => {
+            // This will be handled dynamically when coffee playlists are shown
+            showNotification('Playing playlist');
+        });
+        
         // Coffee mood playlists
         document.querySelectorAll('.playlist-nav').forEach(item => {
             item.addEventListener('click', (e) => {
@@ -2366,5 +2607,5 @@
         // Start the app
         initialize();
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97f08271e3743b7a',t:'MTc1Nzg1OTQ2NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97f0b43fb5277fbe',t:'MTc1Nzg2MTUwNC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
