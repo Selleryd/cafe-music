@@ -629,8 +629,9 @@
         @media (max-width: 768px) {
             .sidebar {
                 transform: translateX(-100%);
-                width: 280px;
+                width: 300px;
                 z-index: 1000;
+                padding: 32px 24px;
             }
             
             .sidebar.open {
@@ -639,15 +640,28 @@
             
             .main-content {
                 margin-left: 0;
-                padding-left: 16px;
-                padding-right: 16px;
+                padding-left: 20px;
+                padding-right: 20px;
             }
             
             .music-player {
-                padding: 0 8px;
+                padding: 16px 12px;
                 flex-wrap: wrap;
                 height: auto;
-                min-height: 90px;
+                min-height: 100px;
+                gap: 12px;
+            }
+            
+            .music-player > div:nth-child(1) {
+                flex: 1;
+                min-width: 200px;
+            }
+            
+            .music-player > div:nth-child(2) {
+                flex: 1;
+                min-width: 280px;
+                order: 3;
+                width: 100%;
             }
             
             .music-player > div:nth-child(3) {
@@ -655,130 +669,319 @@
             }
             
             .header-gradient {
-                padding: 32px 16px 24px;
-                margin: -24px -16px 24px;
+                padding: 48px 20px 32px;
+                margin: -32px -20px 32px;
+                border-radius: 0 0 24px 24px;
             }
             
             .recently-played-grid {
-                grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-                gap: 16px;
+                grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+                gap: 20px;
             }
             
             .section-grid {
-                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-                gap: 16px;
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+                gap: 20px;
             }
             
             .youtube-player {
-                height: 200px;
-            }
-            
-            .track-item {
-                grid-template-columns: 16px 1fr auto;
-                gap: 8px;
-                padding: 12px;
-                border-radius: 8px;
-                margin: 4px 0;
-            }
-            
-            .track-item .col-span-1:nth-child(3),
-            .track-item .col-span-1:nth-child(4) {
-                display: none;
-            }
-            
-            .track-item .col-span-2:nth-child(5) {
-                display: flex;
-                flex-direction: column;
-                gap: 4px;
-                align-items: center;
-            }
-            
-            .track-item .col-span-3:nth-child(6) {
-                grid-column: span 1;
-                display: flex;
-                flex-direction: column;
-                gap: 4px;
-                align-items: center;
-            }
-            
-            .track-item .col-span-3:nth-child(6) button,
-            .track-item .col-span-2:nth-child(5) button {
-                min-width: 32px;
-                min-height: 32px;
-                padding: 6px;
-                font-size: 12px;
-            }
-            
-            .track-item .col-span-1:nth-child(7) {
-                display: none;
+                height: 220px;
+                border-radius: 12px;
             }
             
             .px-8 {
-                padding-left: 16px;
-                padding-right: 16px;
+                padding-left: 20px;
+                padding-right: 20px;
             }
             
+            /* Mobile Header Optimizations */
             h1 {
-                font-size: 2rem !important;
+                font-size: 2.5rem !important;
+                line-height: 1.1 !important;
+                margin-bottom: 12px !important;
             }
             
             .text-6xl {
-                font-size: 2.5rem !important;
+                font-size: 3rem !important;
+                line-height: 1.1 !important;
             }
             
             .ml-8 {
-                margin-left: 1rem !important;
+                margin-left: 0 !important;
             }
             
             .w-60.h-60 {
-                width: 120px !important;
-                height: 120px !important;
+                width: 140px !important;
+                height: 140px !important;
+                flex-shrink: 0;
             }
             
             .flex.items-start.space-x-6 {
                 flex-direction: column;
-                space-x: 0;
-                gap: 16px;
+                align-items: center;
+                text-align: center;
+                gap: 24px;
+            }
+            
+            .flex.items-start.space-x-6 > div:last-child {
+                width: 100%;
             }
             
             /* Mobile Touch Optimizations */
             .control-button {
-                min-width: 44px;
-                min-height: 44px;
-                padding: 12px;
+                min-width: 48px;
+                min-height: 48px;
+                padding: 14px;
+                border-radius: 12px;
+                font-size: 16px;
             }
             
             .heart-button {
-                min-width: 44px;
-                min-height: 44px;
-                padding: 12px;
+                min-width: 48px;
+                min-height: 48px;
+                padding: 14px;
+                border-radius: 12px;
+                font-size: 18px;
             }
             
             .share-button, .youtube-link {
-                padding: 8px 12px;
-                font-size: 14px;
-                min-height: 36px;
+                padding: 12px 16px;
+                font-size: 15px;
+                min-height: 44px;
+                border-radius: 8px;
+                font-weight: 600;
             }
             
             .nav-item {
-                padding: 16px 12px;
-                font-size: 16px;
+                padding: 18px 16px;
+                font-size: 17px;
+                border-radius: 8px;
+                margin: 4px 0;
+            }
+            
+            .nav-item i {
+                font-size: 20px;
+                width: 28px;
             }
             
             .genre-pill {
-                padding: 12px 20px;
+                padding: 14px 24px;
                 font-size: 16px;
-                min-height: 44px;
+                min-height: 48px;
+                border-radius: 24px;
+                font-weight: 600;
             }
             
             .spotify-card {
-                padding: 20px;
+                padding: 24px;
+                border-radius: 16px;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            }
+            
+            .spotify-card h3 {
+                font-size: 16px;
+                font-weight: 600;
+                margin-bottom: 8px;
+            }
+            
+            .spotify-card p {
+                font-size: 14px;
             }
             
             .play-button {
-                width: 56px;
-                height: 56px;
+                width: 60px;
+                height: 60px;
+                font-size: 20px;
+                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+            }
+            
+            .album-art {
+                border-radius: 12px;
+                margin-bottom: 20px;
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+            }
+            
+            /* Main Play Button Mobile */
+            .main-play-button {
+                width: 64px;
+                height: 64px;
+                font-size: 20px;
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            }
+            
+            /* Mobile Player Controls */
+            .music-player .control-button {
+                min-width: 44px;
+                min-height: 44px;
+                padding: 12px;
+                font-size: 16px;
+            }
+            
+            .music-player .main-play-button {
+                width: 48px;
+                height: 48px;
+                font-size: 16px;
+            }
+            
+            /* Mobile Progress Bar */
+            .progress-bar {
+                height: 6px;
+                margin: 8px 0;
+            }
+            
+            .progress-bar:hover {
+                height: 8px;
+            }
+            
+            .progress-handle {
+                width: 16px;
+                height: 16px;
+                right: -8px;
+            }
+            
+            /* Mobile Modal Optimizations */
+            .modal-content {
+                margin: 20px;
+                padding: 32px 24px;
+                border-radius: 16px;
+                max-height: 80vh;
+                overflow-y: auto;
+            }
+            
+            .modal input, .modal textarea {
+                padding: 16px;
+                font-size: 16px;
+                border-radius: 8px;
+                margin: 12px 0;
+            }
+            
+            .modal button {
+                padding: 16px 32px;
+                font-size: 16px;
+                border-radius: 12px;
+                min-height: 48px;
+                margin: 8px 4px;
+            }
+            
+            /* Mobile Playlist Selection */
+            .playlist-selection-item {
+                padding: 16px;
+                border-radius: 12px;
+                margin: 8px 0;
+            }
+            
+            .playlist-icon {
+                width: 48px;
+                height: 48px;
+                border-radius: 8px;
+                margin-right: 16px;
+            }
+            
+            .playlist-info h4 {
+                font-size: 16px;
+                margin-bottom: 4px;
+            }
+            
+            .playlist-info p {
+                font-size: 14px;
+            }
+            
+            /* Mobile Video Slideshow */
+            .youtube-player iframe {
+                border-radius: 12px;
+            }
+            
+            #videoSlideshow {
+                border-radius: 16px;
+                padding: 24px;
+            }
+            
+            #videoSlideshow h3 {
+                font-size: 20px;
+                margin-bottom: 8px;
+            }
+            
+            #videoSlideshow p {
+                font-size: 15px;
+            }
+            
+            #videoSlideshow .flex.items-center.space-x-6 {
+                flex-direction: column;
+                gap: 16px;
+                text-align: center;
+            }
+            
+            #videoSlideshow .flex.items-center.space-x-2 {
+                margin-top: 16px;
+            }
+            
+            /* Mobile Back Buttons */
+            .header-gradient button {
+                width: 44px;
+                height: 44px;
                 font-size: 18px;
+                border-radius: 12px;
+            }
+            
+            /* Mobile Menu Button */
+            #mobileMenuBtn {
+                width: 48px;
+                height: 48px;
+                border-radius: 12px;
+                font-size: 18px;
+                backdrop-filter: blur(10px);
+                background: rgba(0, 0, 0, 0.7);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+            }
+            
+            /* Mobile Section Spacing */
+            .section {
+                padding-bottom: 120px;
+            }
+            
+            section {
+                margin-bottom: 40px;
+            }
+            
+            section h2 {
+                font-size: 24px;
+                margin-bottom: 20px;
+                font-weight: 700;
+            }
+            
+            /* Mobile Typography */
+            .poppins {
+                letter-spacing: -0.02em;
+            }
+            
+            /* Mobile Notification */
+            .notification {
+                top: 80px;
+                right: 20px;
+                left: 20px;
+                text-align: center;
+                border-radius: 12px;
+                padding: 16px 20px;
+                font-size: 16px;
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            }
+            
+            /* Mobile Safe Areas */
+            .main-content {
+                padding-bottom: 140px;
+            }
+            
+            .music-player {
+                padding-bottom: env(safe-area-inset-bottom, 16px);
+            }
+            
+            .sidebar {
+                padding-top: max(32px, env(safe-area-inset-top));
+                padding-bottom: env(safe-area-inset-bottom, 32px);
+            }
+            
+            #mobileMenuBtn {
+                top: max(16px, env(safe-area-inset-top, 16px));
             }
         }
         
@@ -2739,5 +2942,5 @@
         // Start the app
         initialize();
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97f0dcc1716a658c',t:'MTc1Nzg2MzE2My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97f0e9dcb7ca42cd',t:'MTc1Nzg2MzcwMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
