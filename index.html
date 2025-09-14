@@ -628,6 +628,8 @@
         @media (max-width: 768px) {
             .sidebar {
                 transform: translateX(-100%);
+                width: 280px;
+                z-index: 1000;
             }
             
             .sidebar.open {
@@ -636,15 +638,88 @@
             
             .main-content {
                 margin-left: 0;
+                padding-left: 16px;
+                padding-right: 16px;
             }
             
             .music-player {
                 padding: 0 8px;
+                flex-wrap: wrap;
+                height: auto;
+                min-height: 90px;
             }
             
             .music-player > div:nth-child(3) {
                 display: none;
             }
+            
+            .header-gradient {
+                padding: 32px 16px 24px;
+                margin: -24px -16px 24px;
+            }
+            
+            .recently-played-grid {
+                grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+                gap: 16px;
+            }
+            
+            .section-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                gap: 16px;
+            }
+            
+            .youtube-player {
+                height: 200px;
+            }
+            
+            .track-item {
+                grid-template-columns: 16px 1fr auto;
+                gap: 8px;
+                padding: 8px 12px;
+            }
+            
+            .track-item .col-span-2:nth-child(3),
+            .track-item .col-span-2:nth-child(4),
+            .track-item .col-span-2:nth-child(5) {
+                display: none;
+            }
+            
+            .px-8 {
+                padding-left: 16px;
+                padding-right: 16px;
+            }
+            
+            h1 {
+                font-size: 2rem !important;
+            }
+            
+            .text-6xl {
+                font-size: 2.5rem !important;
+            }
+            
+            .w-60.h-60 {
+                width: 120px !important;
+                height: 120px !important;
+            }
+            
+            .flex.items-start.space-x-6 {
+                flex-direction: column;
+                space-x: 0;
+                gap: 16px;
+            }
+        }
+        
+        /* Prevent horizontal scroll */
+        body {
+            overflow-x: hidden;
+        }
+        
+        * {
+            max-width: 100%;
+        }
+        
+        .main-content {
+            overflow-x: hidden;
         }
         
         /* Custom Scrollbar */
@@ -725,26 +800,7 @@
             transform: translateY(-2px);
         }
         
-        /* Search Bar */
-        .search-bar {
-            background: var(--spotify-light-gray);
-            border: none;
-            border-radius: 20px;
-            padding: 12px 16px;
-            color: var(--spotify-text);
-            width: 100%;
-            max-width: 400px;
-            font-size: 14px;
-        }
-        
-        .search-bar:focus {
-            outline: 2px solid var(--spotify-green);
-            background: #3a3a3a;
-        }
-        
-        .search-bar::placeholder {
-            color: var(--spotify-text-muted);
-        }
+        /* Search Bar styles removed */
         
         /* YouTube Link Button */
         .youtube-link {
@@ -854,6 +910,9 @@
         </div>
     </div>
 
+    <!-- Mobile Sidebar Overlay -->
+    <div id="sidebarOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden md:hidden"></div>
+    
     <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
         <!-- Logo -->
@@ -871,10 +930,6 @@
             <a href="#" class="nav-item active" data-section="home">
                 <i class="fas fa-home"></i>
                 Home
-            </a>
-            <a href="#" class="nav-item" data-section="search">
-                <i class="fas fa-search"></i>
-                Search
             </a>
             <a href="#" class="nav-item" data-section="library">
                 <i class="fas fa-list"></i>
@@ -936,13 +991,7 @@
                         </button>
                     </div>
                     <div class="flex items-center space-x-4">
-                        <input type="text" placeholder="Search for songs, artists..." class="search-bar" id="searchInput">
-                        <button class="bg-black bg-opacity-50 px-4 py-2 rounded-full text-sm font-semibold hover-lift">
-                            Upgrade
-                        </button>
-                        <div class="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center cursor-pointer hover-lift">
-                            <i class="fas fa-user text-sm"></i>
-                        </div>
+                        <!-- Removed search, upgrade, and profile buttons -->
                     </div>
                 </div>
                 
@@ -1226,10 +1275,10 @@
         // Track Database with GitHub audio files
         const tracks = {
             'morning-brew': {
-                title: 'Kumzitz',
+                title: 'Morning Brew',
                 artist: 'Café Sessions',
                 album: 'Acoustic Mornings',
-                duration: 304,
+                duration: 204,
                 gradient: 'from-blue-400 to-purple-500',
                 icon: 'fas fa-music',
                 youtube: 'https://www.youtube.com/watch?v=KcEbfZvjLt4',
@@ -1244,7 +1293,7 @@
                 gradient: 'from-green-400 to-teal-500',
                 icon: 'fas fa-guitar',
                 youtube: 'https://www.youtube.com/watch?v=KcEbfZvjLt4',
-                audioFile: './assets/music/kumzitz.mp3',
+                audioFile: './assets/music/sunrise_serenade.mp3',
                 genre: 'folk'
             },
             'golden-hour': {
@@ -2090,7 +2139,33 @@
         
         // Mobile menu toggle
         document.getElementById('mobileMenuBtn').addEventListener('click', () => {
-            document.getElementById('sidebar').classList.toggle('open');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('hidden');
+        });
+        
+        // Close mobile menu when overlay is clicked
+        document.getElementById('sidebarOverlay').addEventListener('click', () => {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            
+            sidebar.classList.remove('open');
+            overlay.classList.add('hidden');
+        });
+        
+        // Close mobile menu when navigation item is clicked
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('nav-item') && window.innerWidth <= 768) {
+                const sidebar = document.getElementById('sidebar');
+                const overlay = document.getElementById('sidebarOverlay');
+                
+                setTimeout(() => {
+                    sidebar.classList.remove('open');
+                    overlay.classList.add('hidden');
+                }, 300);
+            }
         });
         
         // Play buttons (delegated event listener)
@@ -2221,13 +2296,7 @@
             });
         });
         
-        // Search functionality
-        document.getElementById('searchInput').addEventListener('input', (e) => {
-            const query = e.target.value.toLowerCase();
-            if (query.length > 2) {
-                showNotification(`Searching for "${query}"`);
-            }
-        });
+        // Search functionality removed
         
         // Auto-advance video slideshow every 10 seconds (optional)
         setInterval(() => {
@@ -2296,5 +2365,5 @@
         // Start the app
         initialize();
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97e0f0600269d96d',t:'MTc1NzY5NjE5NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97f08271e3743b7a',t:'MTc1Nzg1OTQ2NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
