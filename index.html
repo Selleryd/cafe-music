@@ -1975,52 +1975,80 @@
                         </div>
                         
                         <!-- Mobile Layout -->
-                        <div class="track-item md:hidden bg-gray-800 rounded-lg p-5 mb-4 hover:bg-gray-700 transition-colors" data-track="${trackId}">
-                            <!-- Track Info Row -->
-                            <div class="flex items-center space-x-4 mb-4">
-                                <div class="w-14 h-14 bg-gradient-to-br ${track.gradient} rounded-lg flex items-center justify-center text-white flex-shrink-0">
-                                    <i class="${track.icon}"></i>
+                        <div class="track-item md:hidden bg-gray-800 rounded-xl p-6 mb-5 hover:bg-gray-700 transition-colors shadow-lg" data-track="${trackId}">
+                            <!-- Track Info Section -->
+                            <div class="flex items-start space-x-4 mb-5">
+                                <div class="w-16 h-16 bg-gradient-to-br ${track.gradient} rounded-xl flex items-center justify-center text-white flex-shrink-0 shadow-md">
+                                    <i class="${track.icon} text-lg"></i>
                                 </div>
                                 <div class="flex-1 min-w-0">
-                                    <h4 class="font-semibold text-white text-base mb-1">${track.title}</h4>
-                                    <p class="text-sm text-gray-400 mb-1">${track.artist}</p>
-                                    <p class="text-sm text-gray-300 font-medium">${track.album}</p>
+                                    <h4 class="font-bold text-white text-lg mb-2 leading-tight">${track.title}</h4>
+                                    <p class="text-base text-gray-300 mb-1 font-medium">${track.artist}</p>
                                 </div>
-                                <button class="heart-button track-heart-btn ${isLiked ? 'liked' : ''} p-3" data-track="${trackId}" onclick="event.stopPropagation(); toggleTrackLike('${trackId}')" title="Like track">
-                                    <i class="${isLiked ? 'fas' : 'far'} fa-heart text-lg"></i>
+                                <button class="heart-button track-heart-btn ${isLiked ? 'liked' : ''} p-3 rounded-full hover:bg-gray-600 transition-colors" data-track="${trackId}" onclick="event.stopPropagation(); toggleTrackLike('${trackId}')" title="Like track">
+                                    <i class="${isLiked ? 'fas' : 'far'} fa-heart text-xl"></i>
                                 </button>
                             </div>
                             
-                            <!-- Stats Row -->
-                            <div class="flex items-center justify-between mb-4 text-sm">
-                                <div class="flex items-center space-x-4">
-                                    <span class="text-gray-300 font-medium">
-                                        <i class="fas fa-play-circle mr-1"></i>
-                                        ${formatPlays(track.plays)} plays
-                                    </span>
-                                    <span class="text-gray-400">
-                                        <i class="far fa-clock mr-1"></i>
-                                        ${formatTime(track.duration)}
-                                    </span>
+                            <!-- Album Section -->
+                            <div class="mb-4 p-3 bg-gray-700 rounded-lg">
+                                <div class="flex items-center">
+                                    <i class="fas fa-compact-disc text-gray-400 mr-3 text-lg"></i>
+                                    <div>
+                                        <p class="text-xs text-gray-400 uppercase tracking-wide font-semibold mb-1">Album</p>
+                                        <p class="text-base text-white font-medium">${track.album}</p>
+                                    </div>
                                 </div>
                             </div>
                             
-                            <!-- Action Buttons Row -->
-                            <div class="grid grid-cols-2 gap-3">
-                                <div class="flex space-x-2">
-                                    <button class="youtube-link flex-1 text-sm py-3 px-4 rounded-lg font-medium" onclick="event.stopPropagation(); window.open('${track.youtube}', '_blank')">
-                                        <i class="fab fa-youtube mr-2"></i>Watch
+                            <!-- Stats Section -->
+                            <div class="grid grid-cols-2 gap-4 mb-5">
+                                <div class="p-3 bg-gray-700 rounded-lg">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-play-circle text-green-400 mr-2 text-lg"></i>
+                                        <div>
+                                            <p class="text-xs text-gray-400 uppercase tracking-wide font-semibold">Plays</p>
+                                            <p class="text-base text-white font-bold">${formatPlays(track.plays)}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="p-3 bg-gray-700 rounded-lg">
+                                    <div class="flex items-center">
+                                        <i class="far fa-clock text-blue-400 mr-2 text-lg"></i>
+                                        <div>
+                                            <p class="text-xs text-gray-400 uppercase tracking-wide font-semibold">Duration</p>
+                                            <p class="text-base text-white font-bold">${formatTime(track.duration)}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Links Section -->
+                            <div class="mb-5">
+                                <p class="text-xs text-gray-400 uppercase tracking-wide font-semibold mb-3">Links</p>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <button class="youtube-link text-sm py-4 px-4 rounded-lg font-semibold flex items-center justify-center transition-all hover:scale-105" onclick="event.stopPropagation(); window.open('${track.youtube}', '_blank')">
+                                        <i class="fab fa-youtube mr-2 text-lg"></i>
+                                        <span>Watch Video</span>
                                     </button>
-                                    <button class="share-button flex-1 text-sm py-3 px-4 rounded-lg font-medium" onclick="event.stopPropagation(); shareTrack('${trackId}')" title="Share track">
-                                        <i class="fas fa-share mr-2"></i>Share
+                                    <button class="share-button text-sm py-4 px-4 rounded-lg font-semibold flex items-center justify-center transition-all hover:scale-105" onclick="event.stopPropagation(); shareTrack('${trackId}')" title="Share track">
+                                        <i class="fas fa-share mr-2 text-lg"></i>
+                                        <span>Share Track</span>
                                     </button>
                                 </div>
-                                <div class="flex space-x-2">
-                                    <button class="control-button bg-gray-600 hover:bg-gray-500 text-white py-3 px-4 rounded-lg flex-1" data-track="${trackId}" onclick="event.stopPropagation(); showAddToPlaylistModal('${trackId}')" title="Add to playlist">
-                                        <i class="fas fa-plus mr-2"></i>Add
+                            </div>
+                            
+                            <!-- Actions Section -->
+                            <div>
+                                <p class="text-xs text-gray-400 uppercase tracking-wide font-semibold mb-3">Actions</p>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <button class="bg-gray-600 hover:bg-gray-500 text-white py-4 px-4 rounded-lg font-semibold flex items-center justify-center transition-all hover:scale-105" data-track="${trackId}" onclick="event.stopPropagation(); showAddToPlaylistModal('${trackId}')" title="Add to playlist">
+                                        <i class="fas fa-plus mr-2 text-lg"></i>
+                                        <span>Add to Playlist</span>
                                     </button>
-                                    <button class="control-button bg-green-500 hover:bg-green-600 text-black py-3 px-4 rounded-lg flex-1 font-medium" onclick="event.stopPropagation(); playTrack('${trackId}')" title="Play track">
-                                        <i class="fas fa-play mr-2"></i>Play
+                                    <button class="bg-green-500 hover:bg-green-600 text-black py-4 px-4 rounded-lg font-bold flex items-center justify-center transition-all hover:scale-105 shadow-lg" onclick="event.stopPropagation(); playTrack('${trackId}')" title="Play track">
+                                        <i class="fas fa-play mr-2 text-lg"></i>
+                                        <span>Play Now</span>
                                     </button>
                                 </div>
                             </div>
@@ -2711,5 +2739,5 @@
         // Start the app
         initialize();
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97f0cee81305424d',t:'MTc1Nzg2MjU5NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97f0dcc1716a658c',t:'MTc1Nzg2MzE2My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
